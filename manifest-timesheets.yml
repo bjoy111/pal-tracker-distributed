@@ -7,8 +7,11 @@ applications:
   - route: timesheets-pal-joydeep.cfapps.io
   path: Applications/TimesheetsServer/bin/Release/netcoreapp2.2/publish
   
+  env:
+    GRANT_TYPE: client_credentials
   services:
-  - tracker-timesheets-database
+  - tracker-allocations-database
   - tracker-service-registry
   - tracker-circuit-breaker-dashboard
   - tracker-amqp
+  - tracker-sso
