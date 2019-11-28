@@ -31,8 +31,9 @@ namespace AllocationsServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                 .AddCloudFoundryJwtBearer(Configuration);
+                    .AddCloudFoundryJwtBearer(Configuration);
             services.AddDiscoveryClient(Configuration);
             services.AddLogging(loggingBuilder =>
             {
@@ -67,8 +68,7 @@ namespace AllocationsServer
 
                  var logger = sp.GetService<ILogger<ProjectClient>>();
                  var contextAccessor = sp.GetService<IHttpContextAccessor>();
-                 return new ProjectClient(
-                     httpClient, logger,
+                 return new ProjectClient( httpClient, logger,
                      () => contextAccessor.HttpContext.GetTokenAsync("access_token")
                  );
             });
