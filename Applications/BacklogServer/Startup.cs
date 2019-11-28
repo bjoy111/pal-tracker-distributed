@@ -7,7 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Steeltoe.CloudFoundry.Connector.MySql.EFCore;
-
+using Steeltoe.Discovery.Client;
+using Steeltoe.Common.Discovery;
 namespace BacklogServer
 {
     public class Startup
@@ -22,6 +23,7 @@ namespace BacklogServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDiscoveryClient(Configuration);
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.AddConsole();
@@ -36,7 +38,8 @@ namespace BacklogServer
 
             services.AddSingleton<IProjectClient>(sp =>
             {
-                var httpClient = new HttpClient
+               var handler = new DiscoveryHttpClientHandler(sp.GetService<IDiscoveryClient>());
+               var httpClient = new HttpClient(handler, false)
                 {
                     BaseAddress = new Uri(Configuration.GetValue<string>("REGISTRATION_SERVER_ENDPOINT"))
                 };
@@ -49,6 +52,7 @@ namespace BacklogServer
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseMvc();
+            app.UseDiscoveryClient();
         }
     }
 }
